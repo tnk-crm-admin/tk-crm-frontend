@@ -1,7 +1,35 @@
 import { create } from 'zustand';
-import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://tk-crm-backend.onrender.com/api';
+const demoUsers = {
+  'andrew@tk.com': {
+    id: 1,
+    name: 'Andrew Yap',
+    email: 'andrew@tk.com',
+    role: 'sales_rep',
+    department: 'Medical Sales'
+  },
+  'yeoh@tk.com': {
+    id: 2,
+    name: 'Yeoh',
+    email: 'yeoh@tk.com',
+    role: 'sales_rep',
+    department: 'Dental / Medical Sales'
+  },
+  'chong@tk.com': {
+    id: 3,
+    name: 'Ms. Chong',
+    email: 'chong@tk.com',
+    role: 'manager',
+    department: 'Accounts & Admin'
+  },
+  'tiffany@tk.com': {
+    id: 4,
+    name: 'Tiffany',
+    email: 'tiffany@tk.com',
+    role: 'admin',
+    department: 'Owner / Admin'
+  }
+};
 
 export const useAuthStore = create((set) => ({
   user: null,
@@ -9,46 +37,41 @@ export const useAuthStore = create((set) => ({
   loading: false,
   error: null,
 
-  // Login with email and password
   login: async (email, password) => {
     set({ loading: true, error: null });
-    try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        password,
-      });
-      
-      const { token, user } = response.data;
-      localStorage.setItem('authToken', token);
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    if (demoUsers[normalizedEmail] && password === 'demo123') {
+      const user = demoUsers[normalizedEmail];
+
+      localStorage.setItem('authToken', 'demo-token');
       localStorage.setItem('user', JSON.stringify(user));
-      
-      // Set default auth header
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
+
       set({
         user,
         isAuthenticated: true,
         loading: false,
         error: null,
       });
-      
+
       return true;
-    } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
-      set({
-        isAuthenticated: false,
-        loading: false,
-        error: errorMessage,
-      });
-      return false;
     }
+
+    set({
+      user: null,
+      isAuthenticated: false,
+      loading: false,
+      error: 'Invalid credentials',
+    });
+
+    return false;
   },
 
-  // Logout
   logout: () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
-    delete axios.defaults.headers.common['Authorization'];
+
     set({
       user: null,
       isAuthenticated: false,
@@ -56,25 +79,17 @@ export const useAuthStore = create((set) => ({
     });
   },
 
-  // Initialize auth from stored token
   initializeAuth: async () => {
-    const token = localStorage.getItem('authToken');
     const storedUser = localStorage.getItem('user');
-    
-    if (token && storedUser) {
-      try {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        set({
-          user: JSON.parse(storedUser),
-          isAuthenticated: true,
-        });
-      } catch (error) {
-        set({ isAuthenticated: false });
-      }
+
+    if (storedUser) {
+      set({
+        user: JSON.parse(storedUser),
+        isAuthenticated: true,
+      });
     }
   },
 
-  // Update user profile
   updateUser: (userData) => {
     set((state) => ({
       user: { ...state.user, ...userData },
@@ -82,5 +97,4 @@ export const useAuthStore = create((set) => ({
   },
 }));
 
-// Initialize auth on app load
 useAuthStore.getState().initializeAuth();
