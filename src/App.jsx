@@ -17,67 +17,34 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored auth token on mount
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      // Token validation would happen here
-      setLoading(false);
-    } else {
-      setLoading(false);
-    }
+    setLoading(false);
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-white">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading T&K CRM...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <LoginPage />;
+    return <div>Loading T&K CRM...</div>;
   }
 
   return (
     <Router>
-      <Layout>
-        <Routes>
-          {/* Sales Rep Routes */}
-          {(user?.role === 'sales_rep' || user?.role === 'manager' || user?.role === 'admin') && (
-            <>
-              <Route path="/dashboard/sales" element={<SalesRepDashboard />} />
-              <Route path="/cases" element={<CaseManagement />} />
-              <Route path="/cta" element={<CTAManagement />} />
-              <Route path="/inventory/my-stock" element={<InventoryManagement />} />
-            </>
-          )}
-
-          {/* Manager Routes */}
-          {(user?.role === 'manager' || user?.role === 'admin') && (
-            <>
-              <Route path="/inventory/management" element={<InventoryManagement />} />
-              <Route path="/dashboard/operations" element={<OperationsDashboard />} />
-            </>
-          )}
-
-          {/* Admin/Executive Routes */}
-          {user?.role === 'admin' && (
-            <>
-              <Route path="/dashboard/executive" element={<ExecutiveDashboard />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/configuration" element={<AdminConfiguration />} />
-            </>
-          )}
-
-          {/* Default Routes */}
-          <Route path="/" element={<Navigate to={`/dashboard/${user?.role === 'admin' ? 'executive' : 'sales'}`} />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Layout>
+      {!isAuthenticated ? (
+        <LoginPage />
+      ) : (
+        <Layout>
+          <Routes>
+            <Route path="/dashboard/sales" element={<SalesRepDashboard />} />
+            <Route path="/cases" element={<CaseManagement />} />
+            <Route path="/cta" element={<CTAManagement />} />
+            <Route path="/inventory/my-stock" element={<InventoryManagement />} />
+            <Route path="/inventory/management" element={<InventoryManagement />} />
+            <Route path="/dashboard/operations" element={<OperationsDashboard />} />
+            <Route path="/dashboard/executive" element={<ExecutiveDashboard />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/configuration" element={<AdminConfiguration />} />
+            <Route path="/" element={<Navigate to={user?.role === 'admin' ? '/dashboard/executive' : '/dashboard/sales'} />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </Layout>
+      )}
     </Router>
   );
 }
