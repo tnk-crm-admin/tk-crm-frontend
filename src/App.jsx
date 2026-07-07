@@ -4,7 +4,7 @@ import { useAuthStore } from './store/authStore';
 import LoginPage from './pages/LoginPage';
 import SalesRepDashboard from './pages/dashboards/SalesRepDashboard';
 import ExecutiveDashboard from './pages/dashboards/ExecutiveDashboard';
-import AdminDashboard from './pages/dashboards/AdminDashboard';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import OperationsDashboard from './pages/dashboards/OperationsDashboard';
 import InventoryManagement from './pages/inventory/InventoryManagement';
 import CaseManagement from './pages/cases/CaseManagement';
