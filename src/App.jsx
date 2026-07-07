@@ -39,8 +39,12 @@ function App() {
   }
 
   if (!isAuthenticated) {
-    return <LoginPage />;
-  }
+  return (
+    <Router>
+      <LoginPage />
+    </Router>
+  );
+}
 
   return (
     <Router>
