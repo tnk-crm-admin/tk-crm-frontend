@@ -17,10 +17,8 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored auth token on mount
     const token = localStorage.getItem('authToken');
     if (token) {
-      // Token validation would happen here
       setLoading(false);
     } else {
       setLoading(false);
@@ -39,12 +37,12 @@ function App() {
   }
 
   if (!isAuthenticated) {
-  return (
-    <Router>
-      <LoginPage />
-    </Router>
-  );
-}
+    return (
+      <Router>
+        <LoginPage />
+      </Router>
+    );
+  }
 
   return (
     <Router>
@@ -68,6 +66,14 @@ function App() {
             </>
           )}
 
+          {/* Operations Routes */}
+          {user?.role === 'operations' && (
+            <>
+              <Route path="/dashboard/operations" element={<OperationsDashboard />} />
+              <Route path="/inventory/management" element={<InventoryManagement />} />
+            </>
+          )}
+
           {/* Admin/Executive Routes */}
           {user?.role === 'admin' && (
             <>
@@ -77,8 +83,26 @@ function App() {
             </>
           )}
 
+          {/* Owner/Executive Routes */}
+          {user?.role === 'owner' && (
+            <>
+              <Route path="/dashboard/executive" element={<ExecutiveDashboard />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/configuration" element={<AdminConfiguration />} />
+              <Route path="/dashboard/operations" element={<OperationsDashboard />} />
+              <Route path="/inventory/management" element={<InventoryManagement />} />
+            </>
+          )}
+
           {/* Default Routes */}
-          <Route path="/" element={<Navigate to={`/dashboard/${user?.role === 'admin' ? 'executive' : 'sales'}`} />} />
+          <Route path="/" element={<Navigate to={
+            user?.role === 'owner' ? '/dashboard/executive' :
+            user?.role === 'admin' ? '/dashboard/executive' :
+            user?.role === 'operations' ? '/dashboard/operations' :
+            user?.role === 'manager' ? '/dashboard/operations' :
+            '/dashboard/sales'
+          } />} />
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>

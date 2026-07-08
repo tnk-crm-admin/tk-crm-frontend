@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrendingUp, Users, Target, Package, AlertCircle, DollarSign } from 'lucide-react';
-import DateRangeFilter from '../../components/DateRangeFilter';
+// import DateRangeFilter from '../../components/DateRangeFilter';
 
 function ExecutiveDashboard() {
   const [dateRange, setDateRange] = useState({
@@ -47,7 +47,7 @@ function ExecutiveDashboard() {
   return (
     <div className="space-y-6">
       {/* Date Range and Filters */}
-      <DateRangeFilter dateRange={dateRange} setDateRange={setDateRange} />
+      {/* <DateRangeFilter dateRange={dateRange} setDateRange={setDateRange} /> */}
 
       {/* Quick Filters */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
